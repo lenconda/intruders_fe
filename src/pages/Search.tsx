@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput } from 'react-native'
+import { View, Text } from 'react-native'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Actions } from 'react-native-router-flux'
@@ -34,20 +34,18 @@ class Search extends Component<Props, State> {
             </View>
             <InputItem
               placeholder={'输入以搜索...'}
+              styles={styles.searchField}
               style={styles.searchField}
-              // clearButtonMode={'while-editing'}
-              clear
+              clear={true}
+              updatePlaceholder={true}
               placeholderTextColor={'#b7bdc5'}
               onChangeText={newText => {
                 this.setState({
                   searchText: newText,
-                  showClearButton: newText === '' ? false : true
                 })
               }}
+              autoFocus={true}
             ></InputItem>
-            <View style={styles.searchFieldSearchIcon}>
-              {this.state.showClearButton ? <Icon name={'close-circle'} color={'#858c96'} size={16 * remUnit} /> : null}
-            </View>
           </View>
         )
       },
@@ -73,13 +71,14 @@ const styles = EStyleSheet.create({
   },
 
   searchFieldWrapper: {
+    flex: 1,
     backgroundColor: '$searchFieldBackgroundColor',
     width: '100%',
     height: '32rem',
     borderRadius: '16rem',
     padding: '3rem',
-    paddingLeft: 0,
-    paddingRight: '26rem',
+    paddingLeft: '8rem',
+    paddingRight: '16rem',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -87,7 +86,7 @@ const styles = EStyleSheet.create({
   searchField: {
     width: '100%',
     borderBottomWidth: 0,
-
+    paddingLeft: '8rem',
   },
 
   searchFieldSearchIcon: {

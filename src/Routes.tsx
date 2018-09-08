@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import {Scene, Router, Actions} from 'react-native-router-flux'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { isAndroid, remUnit } from './utils'
+import { isAndroid } from './utils'
 const BackButton = require('./resources/image/back_button.png')
 
 import Index from './pages/Index'
@@ -27,7 +26,7 @@ export default class AppRouter extends Component<any, any> {
       >
         <Scene key={'root'}>
           <Scene key={'index'} component={Index} title={'发现'} initial></Scene>
-          <Scene key={'search'} component={Search} title={'搜索'} rightTitle={'取消'} onRight={() => Actions.pop()}></Scene>
+          <Scene key={'search'} component={Search} title={'搜索'} rightTitle={'取消'} onRight={() => {Actions.pop()}}></Scene>
           <Scene key={'webview'} component={WebviewContainer} title={'webview'}></Scene>
         </Scene>
       </FixedRouter>
@@ -53,11 +52,10 @@ const styles = EStyleSheet.create({
 
   navigationTitle: {
     flex: 1,
-    fontSize: '16rem',
+    fontSize: '15rem',
     color: '$titleColor',
     alignSelf: 'center',
     textAlign: 'center',
-    width: '350rem',
   },
 
   leftButtonIcon: {
@@ -72,6 +70,7 @@ const styles = EStyleSheet.create({
     fontSize: '14rem',
     color: '$tabSelectedIconColor',
     marginRight: '10rem',
+    lineHeight: '22.5rem',
   },
 
 })
