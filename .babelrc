@@ -1,0 +1,13 @@
+{
+  "presets": ["react-native"],
+  "plugins": [
+    ["import", { "libraryName": "antd-mobile-rn" }] // The difference with the Web platform is that you do not need to set the style
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        "transform-react-jsx-source"
+      ]
+    }
+  }
+}

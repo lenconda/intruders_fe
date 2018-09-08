@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "pretty": true,
+    "jsx": "react-native",
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "strict": false,
+    "alwaysStrict": true,
+    "strictNullChecks": false,
+    "noUnusedLocals": false,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "types": [
+      "jest"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules/react-native-router-flux/index.d.ts",
+    "./build/**/*"
+  ]
+}
