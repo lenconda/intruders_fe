@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
+import {View, Text, TouchableHighlight, Alert} from 'react-native'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Actions } from 'react-native-router-flux'
@@ -36,9 +36,13 @@ class Search extends Component<Props, State> {
 
   resultItem = ({ item }): JSX.Element => {
     return (
-      <List.Item style={styles.searchResultWrapper}>
-        {item.title}
-      </List.Item>
+      <TouchableHighlight
+        underlayColor={'#f4f5f9'}
+        style={styles.searchResult}
+        onPress={() => {}}
+      >
+        <Text numberOfLines={1}>{item.title}</Text>
+      </TouchableHighlight>
     )
   }
 
@@ -131,9 +135,9 @@ const styles = EStyleSheet.create({
     alignItems: 'center',
   },
 
-  searchResultWrapper: {
-    borderBottomWidth: 0,
-  }
+  searchResult: {
+    padding: '10rem',
+  },
 
 })
 
