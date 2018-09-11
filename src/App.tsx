@@ -18,6 +18,7 @@ EStyleSheet.build({
   $searchFieldTextColor: '#b7bdc5',
   $searchFieldIconColor: '#858c96',
   $searchFieldBackgroundColor: '#f4f5f7',
+  $warning: '#ffc107'
 })
 
 interface Props { }
