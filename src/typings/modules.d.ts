@@ -13,3 +13,5 @@ declare module 'react-native-extended-stylesheet' {
 declare module 'react-native-vector-icons'
 
 declare module 'react-native-advanced-webview'
+
+declare module 'react-native-refresh-list-view'

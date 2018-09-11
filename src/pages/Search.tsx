@@ -4,14 +4,21 @@ import EStyleSheet from 'react-native-extended-stylesheet'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Actions } from 'react-native-router-flux'
 import { InputItem } from 'antd-mobile-rn'
+import RefreshListView, { RefreshState } from 'react-native-refresh-list-view'
+import { Toast, List } from 'antd-mobile-rn'
 
-import { remUnit } from '../utils'
+import { remUnit, isNetworkError } from '../utils'
+import searchApi from '../networks/api/search'
+import { SearchResponse } from '../networks/interfaces'
 
 interface Props { }
 
 interface State {
   searchText: string
-  showClearButton: boolean
+  showSearchResults: boolean
+  refreshState?: string
+  searchResultItems: object
+  page: number
 }
 
 class Search extends Component<Props, State> {
@@ -20,8 +27,19 @@ class Search extends Component<Props, State> {
     super(props)
     this.state = {
       searchText: '',
-      showClearButton: false,
+      showSearchResults: false,
+      refreshState: RefreshState.Idle,
+      searchResultItems: [],
+      page: 1,
     }
+  }
+
+  resultItem = ({ item }): JSX.Element => {
+    return (
+      <List.Item style={styles.searchResultWrapper}>
+        {item.title}
+      </List.Item>
+    )
   }
 
   componentWillMount() {
@@ -34,14 +52,25 @@ class Search extends Component<Props, State> {
             </View>
             <InputItem
               placeholder={'输入以搜索...'}
-              styles={styles.searchField}
+              styles={{}}
               style={styles.searchField}
               clear={true}
               updatePlaceholder={true}
               placeholderTextColor={'#b7bdc5'}
-              onChangeText={newText => {
+              onChangeText={async (newText) => {
+                let searchResults
+                if (newText !== '') {
+                  try {
+                    searchResults = await searchApi.search(newText, 1)
+                  } catch (e) {
+                    if (!isNetworkError(e)) {
+                      Toast.fail('获取数据失败，请稍后重试', 1)
+                    }
+                  }
+                }
                 this.setState({
                   searchText: newText,
+                  searchResultItems: newText === '' ? [] : searchResults.data.data
                 })
               }}
               autoFocus={true}
@@ -56,7 +85,13 @@ class Search extends Component<Props, State> {
     return (
       <View style={styles.container}>
         <View>
-          <Text>{this.state.searchText}</Text>
+          <RefreshListView
+            data={this.state.searchResultItems}
+            renderItem={this.resultItem}
+            refreshState={this.state.refreshState}
+            keyExtractor={(item, index) => index.toString()}
+          >
+          </RefreshListView>
         </View>
       </View>
     )
@@ -68,6 +103,7 @@ const styles = EStyleSheet.create({
 
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
 
   searchFieldWrapper: {
@@ -94,6 +130,10 @@ const styles = EStyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  searchResultWrapper: {
+    borderBottomWidth: 0,
+  }
 
 })
 
