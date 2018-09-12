@@ -13,7 +13,9 @@ import Badge from '../components/Badge'
 
 const ListView = FlatList as any
 
-interface Props { }
+interface Props {
+  text?: string
+}
 
 interface State {
   searchText: string
@@ -29,13 +31,17 @@ class Search extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      searchText: '',
+      searchText: this.props.text,
       showSearchResults: false,
       searchResultItems: [],
       page: 1,
       hasMore: true,
       isLoading: false,
     }
+  }
+
+  static defaultProps = {
+    text: '',
   }
 
   resultItem = ({ item }): JSX.Element => {
@@ -75,6 +81,7 @@ class Search extends Component<Props, State> {
               style={styles.searchField}
               clear={true}
               updatePlaceholder={true}
+              defaultValue={this.props.text}
               placeholderTextColor={'#b7bdc5'}
               onChangeText={async (newText) => {
                 let searchResults
@@ -107,6 +114,26 @@ class Search extends Component<Props, State> {
         )
       },
     })
+  }
+
+  async componentDidMount() {
+    if (this.props.text !== '') {
+      let searchResults
+      try {
+        searchResults = await searchApi.search(this.props.text, 1)
+      } catch (e) {
+        if (!isNetworkError(e)) {
+          Toast.fail('获取数据失败', 1)
+          return
+        }
+      }
+      console.log('response:', searchResults.data)
+      this.setState({
+        page: 2,
+        searchResultItems: searchResults.data.data,
+        hasMore: searchResults.data.hasmore,
+      })
+    }
   }
 
   render(): JSX.Element {
