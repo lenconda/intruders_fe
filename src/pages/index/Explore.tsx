@@ -59,6 +59,12 @@ class Explore extends Component<Props, State> {
             <Text style={styles.searchFieldRightText}>热门</Text>
           </TouchableOpacity>
         </View>
+        <Button title={'test'} onPress={() => {
+          Actions.push('webview', {
+            url: 'https://baidu.com',
+            detail: {}
+          })
+        }} />
       </View>
     )
   }
