@@ -70,7 +70,7 @@ const styles = EStyleSheet.create({
     fontSize: '14rem',
     color: '$tabSelectedIconColor',
     marginRight: '10rem',
-    lineHeight: '22.5rem',
+    marginTop: '4rem',
   },
 
 })

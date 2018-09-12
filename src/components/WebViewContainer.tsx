@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
-import { View, Text, WebView } from 'react-native'
+import { View, Text, WebView, Button } from 'react-native'
 import { Toast } from 'antd-mobile-rn'
 import { Actions } from 'react-native-router-flux'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import {remUnit} from '../utils'
 
 interface Props {
   url: string
@@ -10,7 +12,7 @@ interface Props {
 
 interface State { }
 
-export default class WebContainer extends Component<Props, State> {
+class WebContainer extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props)
@@ -18,8 +20,10 @@ export default class WebContainer extends Component<Props, State> {
 
   componentWillMount() {
     Actions.refresh({
-      rightTitle: '',
-      onRight: () => null
+      rightTitle: <Icon name={'dots-vertical'} size={16 * remUnit} color={'#333'} />,
+      onRight: () => {
+        console.log('...')
+      }
     })
   }
 
@@ -46,3 +50,5 @@ export default class WebContainer extends Component<Props, State> {
   }
 
 }
+
+export default WebContainer
