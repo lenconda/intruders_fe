@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import EStyleSheet from 'react-native-extended-stylesheet'
-import {Scene, Router, Actions} from 'react-native-router-flux'
+import { Scene, Router, Actions, Stack } from 'react-native-router-flux'
 
 import { isAndroid } from './utils'
 const BackButton = require('./resources/image/back_button.png')
@@ -24,11 +24,11 @@ export default class AppRouter extends Component<any, any> {
         leftButtonIconStyle={styles.leftButtonIcon}
         rightButtonTextStyle={styles.rightButtonText}
       >
-        <Scene key={'root'}>
+        <Stack key={'root'}>
           <Scene key={'index'} component={Index} title={'发现'} initial></Scene>
           <Scene key={'search'} component={Search} title={'搜索'} rightTitle={'取消'} onRight={() => {Actions.pop()}}></Scene>
           <Scene key={'webview'} component={WebviewContainer} title={'加载中...'}></Scene>
-        </Scene>
+        </Stack>
       </FixedRouter>
     )
 
