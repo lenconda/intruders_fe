@@ -4,7 +4,6 @@ import EStyleSheet from 'react-native-extended-stylesheet'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Actions } from 'react-native-router-flux'
 import { InputItem } from 'antd-mobile-rn'
-import RefreshListView, { RefreshState } from 'react-native-refresh-list-view'
 import { Toast, List } from 'antd-mobile-rn'
 
 import { remUnit, isNetworkError } from '../utils'
@@ -19,7 +18,6 @@ interface Props { }
 interface State {
   searchText: string
   showSearchResults: boolean
-  refreshState?: string
   searchResultItems: Array<any>
   page: number
   hasMore: boolean
@@ -33,7 +31,6 @@ class Search extends Component<Props, State> {
     this.state = {
       searchText: '',
       showSearchResults: false,
-      refreshState: RefreshState.Idle,
       searchResultItems: [],
       page: 1,
       hasMore: true,
@@ -51,9 +48,13 @@ class Search extends Component<Props, State> {
         <View>
           <Text numberOfLines={1}>{item.title}</Text>
           <View style={styles.badgesWrapper}>
-            <Badge icon={'file-document'} text={item.type} />
-            <Badge icon={'attachment'} text={item.size} />
-            <Badge icon={'clock'} text={item.time} />
+            <Badge icon={'file-document'} text={item.type} style={[styles.badges, { marginLeft: 0 }]} />
+            <Badge icon={'attachment'} text={item.size} style={styles.badges} />
+            <Badge icon={'clock'} text={item.time} style={styles.badges} />
+            {
+              !item.encrypt ? null :
+                <Badge icon={'key'} text={item.password} style={styles.badges} textColor={'#fff'} bkgColor={'#ffc107'} />
+            }
           </View>
         </View>
       </TouchableHighlight>
@@ -85,14 +86,22 @@ class Search extends Component<Props, State> {
                       Toast.fail('获取数据失败', 1)
                     }
                   }
+                  console.log('response:', searchResults.data)
+                  this.setState({
+                    searchText: newText,
+                    searchResultItems: searchResults.data.data,
+                    hasMore: searchResults.data.hasmore,
+                    page: 2,
+                  })
+                } else {
+                  this.setState({
+                    hasMore: false,
+                    searchResultItems: []
+                  })
                 }
-                this.setState({
-                  searchText: newText,
-                  searchResultItems: newText === '' ? [] : searchResults.data.data,
-                  hasMore: newText === '' ? false : searchResults.data.hasmore,
-                })
               }}
               autoFocus={true}
+              autoCapitalize={'none'}
             ></InputItem>
           </View>
         )
@@ -119,13 +128,15 @@ class Search extends Component<Props, State> {
                     searchResults = await searchApi.search(this.state.searchText, this.state.page)
                   } catch (e) {
                     if (!isNetworkError(e)) {
-                      Toast.fail('获取数据失败，请稍后重试', 1)
+                      Toast.fail('获取数据失败', 1)
                       return
                     }
                   }
+                  console.log('response:', searchResults.data)
                   this.setState({
                     page: this.state.page + 1,
-                    searchResultItems: [...this.state.searchResultItems, ...searchResults.data.data]
+                    searchResultItems: [...this.state.searchResultItems, ...searchResults.data.data],
+                    hasMore: searchResults.data.hasmore
                   })
                 }}
               >
@@ -173,9 +184,8 @@ const styles = EStyleSheet.create({
   },
 
   searchResult: {
-    padding: '12rem',
-    paddingTop: '10rem',
-    marginBottom: '5rem',
+    padding: '10rem',
+    paddingBottom: '18rem',
   },
 
   loadMoreText: {
@@ -187,7 +197,12 @@ const styles = EStyleSheet.create({
   badgesWrapper: {
     width: '100%',
     flexDirection: 'row',
-    paddingTop: '12rem',
+    paddingTop: '3rem',
+  },
+
+  badges: {
+    marginRight: '2rem',
+    marginLeft: '2rem',
   },
 
 })

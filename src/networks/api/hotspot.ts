@@ -1,9 +1,10 @@
 import axios from 'axios'
+import config from '../../../config.js'
 
 class HotspotApi {
 
   private http = axios.create({
-    baseURL: 'http://api.lenconda.top/hotspot'
+    baseURL: config.env === 'dev' ? 'http://localhost:3000/hotspot' : 'http://api.lenconda.top/intruders/hotspot'
   })
 
   private urls = {

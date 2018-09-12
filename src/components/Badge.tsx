@@ -8,6 +8,9 @@ import { remUnit } from '../utils'
 interface Props {
   icon?: string
   text?: string
+  style: object
+  textColor: string
+  bkgColor: string
 }
 
 interface State { }
@@ -18,10 +21,20 @@ class Badge extends Component<Props, State> {
     super(props)
   }
 
+  static defaultProps = {
+    style: {},
+    bkgColor: '#f4f5f7',
+    textColor: '#b7bdc5',
+  }
+
   render(): JSX.Element {
     return (
-      <View style={styles.wrapper}>
-        <Text style={styles.text}><Icon name={this.props.icon} size={13 * remUnit} color={'#b7bdc5'} />&nbsp;{this.props.text}</Text>
+      <View style={[styles.wrapper, this.props.style, { backgroundColor: this.props.bkgColor }]}>
+        <Text style={[styles.text, { color: this.props.textColor }]}>
+          <Icon name={this.props.icon} size={9 * remUnit} color={this.props.textColor} />
+          &nbsp;
+          {this.props.text}
+        </Text>
       </View>
     )
   }
@@ -35,15 +48,11 @@ const styles = EStyleSheet.create({
     paddingRight: '5rem',
     paddingBottom: '3rem',
     paddingLeft: '5rem',
-    backgroundColor: '$searchFieldBackgroundColor',
     borderRadius: '6rem',
-    marginLeft: '2rem',
-    marginRight: '2rem',
   },
 
   text: {
-    color: '$searchFieldTextColor',
-    fontSize: '12rem',
+    fontSize: '9rem',
   },
 
 })

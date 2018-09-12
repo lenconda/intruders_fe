@@ -1,9 +1,10 @@
 import axios from 'axios'
+import config from '../../../config'
 
 class SearchApi {
 
   private http = axios.create({
-    baseURL: 'http://api.lenconda.top/intruders'
+    baseURL: config.env === 'dev' ? 'http://localhost:3000' : 'http://api.lenconda.top/intruders'
   })
 
   private urls = {
