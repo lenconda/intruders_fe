@@ -35,7 +35,7 @@ class Search extends Component<Props, State> {
       showSearchResults: false,
       searchResultItems: [],
       page: 1,
-      hasMore: true,
+      hasMore: false,
       isLoading: false,
     }
   }
@@ -49,7 +49,12 @@ class Search extends Component<Props, State> {
       <TouchableHighlight
         underlayColor={'#f4f5f9'}
         style={styles.searchResult}
-        onPress={() => {}}
+        onPress={() => {
+          Actions.push('webview', {
+            url: item.url,
+            detail: item
+          })
+        }}
       >
         <View>
           <Text numberOfLines={1}>{item.title}</Text>
@@ -83,32 +88,32 @@ class Search extends Component<Props, State> {
               updatePlaceholder={true}
               defaultValue={this.props.text}
               placeholderTextColor={'#b7bdc5'}
-              onChangeText={async (newText) => {
+              onChange={async (newText) => {
+                this.setState({
+                  searchText: newText,
+                  searchResultItems: newText === '' ? [] : this.state.searchResultItems,
+                })
+              }}
+              onSubmitEditing={async () => {
                 let searchResults
-                if (newText !== '') {
-                  try {
-                    searchResults = await searchApi.search(newText, 1)
-                  } catch (e) {
-                    if (!isNetworkError(e)) {
-                      Toast.fail('获取数据失败', 1)
-                    }
+                Toast.loading('搜索中...')
+                try {
+                  searchResults = await searchApi.search(this.state.searchText, 1)
+                  Toast.hide()
+                } catch (e) {
+                  if (!isNetworkError(e)) {
+                    Toast.fail('获取数据失败', 1)
                   }
-                  console.log('response:', searchResults.data)
-                  this.setState({
-                    searchText: newText,
-                    searchResultItems: searchResults.data.data,
-                    hasMore: searchResults.data.hasmore,
-                    page: 2,
-                  })
-                } else {
-                  this.setState({
-                    hasMore: false,
-                    searchResultItems: []
-                  })
                 }
+                this.setState({
+                  searchResultItems: searchResults.data.data,
+                  hasMore: searchResults.data.hasmore,
+                  page: 2,
+                })
               }}
               autoFocus={true}
               autoCapitalize={'none'}
+              spellCheck={false}
             ></InputItem>
           </View>
         )
@@ -145,7 +150,7 @@ class Search extends Component<Props, State> {
           renderItem={this.resultItem}
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={
-            (this.state.searchText === '' || !this.state.hasMore) ? null :
+            ((this.state.searchText === '') || !this.state.hasMore) ? null :
               <TouchableHighlight
                 style={styles.searchResult}
                 underlayColor={'#f4f5f9'}

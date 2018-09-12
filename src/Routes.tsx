@@ -27,7 +27,7 @@ export default class AppRouter extends Component<any, any> {
         <Scene key={'root'}>
           <Scene key={'index'} component={Index} title={'发现'} initial></Scene>
           <Scene key={'search'} component={Search} title={'搜索'} rightTitle={'取消'} onRight={() => {Actions.pop()}}></Scene>
-          <Scene key={'webview'} component={WebviewContainer} title={'webview'}></Scene>
+          <Scene key={'webview'} component={WebviewContainer} title={'加载中...'}></Scene>
         </Scene>
       </FixedRouter>
     )

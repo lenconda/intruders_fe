@@ -5,6 +5,7 @@ import { Actions } from 'react-native-router-flux'
 
 interface Props {
   url: string
+  detail?: string
 }
 
 interface State { }
