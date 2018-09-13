@@ -87,7 +87,7 @@ class WebContainer extends Component<Props, State> {
               } else {
                 this.props.addFavorite(this.props.detail)
               }
-              Toast.info(`${liked ? '已从收藏夹中删除' : '已添加到收藏夹'}`)
+              Toast.info(`${liked ? '已从收藏夹中删除' : '已添加到收藏夹'}`, 1)
             }
           }}
           cancelButtonIndex={0}

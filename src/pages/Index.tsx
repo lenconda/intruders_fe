@@ -84,7 +84,7 @@ class Index extends Component<Props, State> {
           renderSelectedIcon={() => <Icon color={'#1b88ee'} name={'bookmark'} size={26 * remUnit} />}
           onPress={() => {this.props.selectTab('收藏')}}
         >
-          <Favorites />
+          <Favorites delFavorite={null} />
         </TabNavigator.Item>
       </TabNavigator>
     )
