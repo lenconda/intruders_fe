@@ -1,22 +1,41 @@
 import React, { Component } from 'react'
 import {View, WebView } from 'react-native'
+import { connect } from 'react-redux';
 import { Toast } from 'antd-mobile-rn'
 import { Actions } from 'react-native-router-flux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import {remUnit} from '../utils'
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
+import _ from 'lodash'
 
+import { ReduxState } from '../redux/interface'
 import ActionWrapper from '../components/ActionWrapper'
+import { add_favorite, del_favorite } from '../redux/modules/favorites/actions'
 
-const options = [
-  <ActionWrapper icon={'close-box'} text={'取消'} iconColor={'#d4483e'} />,
-  <ActionWrapper icon={'bookmark'} text={'收藏'} />,
-]
+const mapStateToProps = (state: ReduxState): object => {
+  return {
+    favorites: state.favoritesState.favorites
+  }
+}
+
+const mapDispatchToProps = (dispatch: any): object => {
+  return {
+    addFavorite: (detail: object): void => {
+      dispatch(add_favorite(detail))
+    },
+    delFavorite: (detail: object): void => {
+      dispatch(del_favorite(detail))
+    }
+  }
+}
 
 interface Props {
   url: string
-  detail?: string
+  detail?: any
   ActionSheet?: JSX.Element
+  favorites?: Array<any>
+  addFavorite(detail: any): void
+  delFavorite(detail: any): void
 }
 
 interface State { }
@@ -35,7 +54,7 @@ class WebContainer extends Component<Props, State> {
 
   componentWillMount() {
     Actions.refresh({
-      rightTitle: <Icon name={'dots-vertical'} size={16 * remUnit} color={'#333'} />,
+      rightTitle: this.props.detail.url ? <Icon name={'dots-vertical'} size={16 * remUnit} color={'#333'} /> : null,
       onRight: this.showActionSheet
     })
   }
@@ -51,16 +70,24 @@ class WebContainer extends Component<Props, State> {
           onLoad={() => {Toast.hide()}}
           javaScriptEnabled={true}
           onNavigationStateChange={(navState) => {
-            console.log(navState.title)
             Actions.refresh({ title: navState.title })
           }}
         />
         <ActionSheet
           ref={o => this.ActionSheet = o}
-          options={options}
+          options={[
+            <ActionWrapper icon={'close-box'} text={'取消'} />,
+            _.find(this.props.favorites, this.props.detail) ? <ActionWrapper icon={'bookmark-outline'} text={'取消收藏'} /> : <ActionWrapper icon={'bookmark'} text={'收藏'} />,
+          ]}
           onPress={(index) => {
+            let liked = _.find(this.props.favorites, this.props.detail)
             if (index === 1) {
-
+              if (liked) {
+                this.props.delFavorite(this.props.detail)
+              } else {
+                this.props.addFavorite(this.props.detail)
+              }
+              Toast.info(`${liked ? '已从收藏夹中删除' : '已添加到收藏夹'}`)
             }
           }}
           cancelButtonIndex={0}
@@ -72,4 +99,4 @@ class WebContainer extends Component<Props, State> {
 
 }
 
-export default WebContainer
+export default connect(mapStateToProps, mapDispatchToProps)(WebContainer)

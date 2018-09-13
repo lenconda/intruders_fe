@@ -29,7 +29,7 @@ const mapDispatchToProps = (dispatch: any): object => {
 
 interface Props {
   selected: string
-  selectTab: any
+  selectTab(newTab: string): void
 }
 
 interface State { }

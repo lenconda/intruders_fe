@@ -17,11 +17,10 @@ const favoritesReducer = (state: State = initialState, action: any) => {
       }
       break
     case 'DEL_FAVORITE':
-      _.remove(state.favorites, {
-        url: action.payload.url
-      })
+      let currentFavorites = _.rest(state.favorites, action.payload)
       state = {
-        ...state
+        ...state,
+        favorites: currentFavorites
       }
     default:
       break
@@ -29,5 +28,5 @@ const favoritesReducer = (state: State = initialState, action: any) => {
   return state
 }
 
-export type favoritesState = typeof initialState
+export type FavoritesState = typeof initialState
 export default favoritesReducer
