@@ -7,7 +7,8 @@ import { remUnit } from '../utils'
 
 interface Props {
   icon: string
-  color: string
+  iconColor: string
+  textColor: string
   text: string
 }
 
@@ -20,16 +21,19 @@ class ActionWrapper extends Component<Props, State> {
   }
 
   static defaultProps = {
-    color: '#49505a',
+    iconColor: '#49505a',
+    textColor: '#333',
   }
 
   render(): JSX.Element {
     return (
       <View style={styles.actionWrapper}>
-        <Text style={[styles.actionText, { color: this.props.color }]}>
-          <Icon name={this.props.icon} size={15 * remUnit} color={this.props.color} />
-          &nbsp;{this.props.text}
-        </Text>
+        <View style={styles.actionContentWrapper}>
+          <Icon name={this.props.icon} size={18 * remUnit} color={this.props.iconColor} />
+          <View style={styles.actionTextWrapper}>
+            <Text style={[styles.actionText, { color: this.props.textColor }]}>{this.props.text}</Text>
+          </View>
+        </View>
       </View>
     )
   }
@@ -40,15 +44,23 @@ const styles = EStyleSheet.create({
 
   actionWrapper: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    paddingLeft: '10rem',
+    paddingLeft: '15rem',
     borderBottomWidth: 0,
   },
 
-  actionText: {
-    textAlign: 'left',
+  actionContentWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     width: '100%',
+    marginLeft: '15rem',
+  },
+
+  actionTextWrapper: {
+    marginLeft: '15rem',
+  },
+
+  actionText: {
     fontSize: '15rem',
   }
 
