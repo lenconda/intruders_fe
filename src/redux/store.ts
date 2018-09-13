@@ -7,7 +7,8 @@ import storage from 'redux-persist/lib/storage'
 
 const persistConfig: PersistConfig = {
   key: 'root',
-  storage
+  storage,
+  blacklist: ['tabNavigationState']
 }
 
 const persistedReducer = persistReducer(persistConfig, reducers)

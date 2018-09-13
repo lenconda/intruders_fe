@@ -60,7 +60,7 @@ class WebContainer extends Component<Props, State> {
           options={options}
           onPress={(index) => {
             if (index === 1) {
-              Toast.info(`${index}`)
+
             }
           }}
           cancelButtonIndex={0}
