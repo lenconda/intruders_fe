@@ -14,6 +14,7 @@ const ListView = FlatList as any
 
 interface Props {
   text?: string
+  tab?: string
 }
 
 interface State {
@@ -41,6 +42,7 @@ class Search extends Component<Props, State> {
 
   static defaultProps = {
     text: '',
+    tab: '-1',
   }
 
   resultItem = ({ item }): JSX.Element => {
@@ -97,7 +99,7 @@ class Search extends Component<Props, State> {
                 let searchResults
                 Toast.loading('搜索中...')
                 try {
-                  searchResults = await searchApi.search(this.state.searchText, 1)
+                  searchResults = await searchApi.search(this.state.searchText, 1, this.props.tab)
                   Toast.hide()
                 } catch (e) {
                   if (!isNetworkError(e)) {
@@ -124,7 +126,7 @@ class Search extends Component<Props, State> {
     if (this.props.text !== '') {
       let searchResults
       try {
-        searchResults = await searchApi.search(this.props.text, 1)
+        searchResults = await searchApi.search(this.props.text, 1, this.props.tab)
       } catch (e) {
         if (!isNetworkError(e)) {
           Toast.fail('获取数据失败', 1)
@@ -156,14 +158,13 @@ class Search extends Component<Props, State> {
                 onPress={async () => {
                   let searchResults
                   try {
-                    searchResults = await searchApi.search(this.state.searchText, this.state.page)
+                    searchResults = await searchApi.search(this.state.searchText, this.state.page, this.props.tab)
                   } catch (e) {
                     if (!isNetworkError(e)) {
                       Toast.fail('获取数据失败', 1)
                       return
                     }
                   }
-                  console.log('response:', searchResults.data)
                   this.setState({
                     page: this.state.page + 1,
                     searchResultItems: [...this.state.searchResultItems, ...searchResults.data.data],

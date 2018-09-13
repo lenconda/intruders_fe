@@ -11,11 +11,12 @@ class SearchApi {
     search: '/search',
   }
 
-  search = async (keyword: string, page: number) => {
+  search = async (keyword: string, page: number, tab?: string) => {
     const res = this.http.get(this.urls.search, {
       params: {
         keyword,
-        page
+        page,
+        tab
       }
     })
     return res
