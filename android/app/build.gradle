@@ -95,7 +95,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.3"
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.intruders"
@@ -137,7 +137,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-advanced-webview')
     compile project(':react-native-splash-screen')
     compile project(':react-native-vector-icons')
     compile fileTree(dir: "libs", include: ["*.jar"])

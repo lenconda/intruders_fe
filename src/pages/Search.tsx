@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Actions } from 'react-native-router-flux'
 import { InputItem, Toast, List } from 'antd-mobile-rn'
 
-import { remUnit, isNetworkError } from '../utils'
+import { remUnit, isNetworkError, isAndroid } from '../utils'
 import searchApi from '../networks/api/search'
 import { SearchResponse } from '../networks/interfaces'
 import Badge from '../components/Badge'
@@ -192,11 +192,10 @@ const styles = EStyleSheet.create({
 
   searchFieldWrapper: {
     flex: 1,
-    backgroundColor: '$searchFieldBackgroundColor',
+    backgroundColor: isAndroid ? '#fff' : '$searchFieldBackgroundColor',
     width: '100%',
-    height: '32rem',
     borderRadius: '16rem',
-    padding: '3rem',
+    padding: isAndroid ? '1rem' : '8rem',
     paddingLeft: '8rem',
     paddingRight: '16rem',
     flexDirection: 'row',
@@ -205,6 +204,7 @@ const styles = EStyleSheet.create({
 
   searchField: {
     width: '100%',
+    height: '100%',
     borderBottomWidth: 0,
     paddingLeft: '8rem',
   },

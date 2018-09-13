@@ -54,23 +54,24 @@ const styles = EStyleSheet.create({
     flex: 1,
     fontSize: '15rem',
     color: '$titleColor',
-    alignSelf: 'center',
-    textAlign: 'center',
   },
 
   leftButtonIcon: {
     width: '13rem',
     height: '13rem',
+    marginLeft: isAndroid ? '10rem' : 0,
     marginTop: isAndroid ? '8rem' : '4rem',
-    position: 'absolute',
-    left: '23.5rem'
+    position: isAndroid ? undefined : 'absolute',
+    left: isAndroid ? undefined : '23.5rem'
   },
 
   rightButtonText: {
     fontSize: '14rem',
     color: '$tabSelectedIconColor',
-    marginRight: '10rem',
-    marginTop: '4rem',
+    textAlign: 'center',
+    position: 'relative',
+    left: isAndroid ? '1rem' : '-10rem',
+    top: isAndroid ? 0 : '2rem',
   },
 
 })
