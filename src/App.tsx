@@ -3,9 +3,10 @@ import { Dimensions } from 'react-native'
 import { Provider } from 'react-redux'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import RNSplashScreen from 'react-native-splash-screen'
+import { PersistGate } from 'redux-persist/integration/react'
 
 import Routes from './Routes'
-import store from './redux/store'
+import store, { persistor } from './redux/store'
 
 EStyleSheet.build({
   $rem: Dimensions.get('window').width / 375,
@@ -38,7 +39,9 @@ export default class App extends Component<Props, State> {
   render(): JSX.Element {
     return (
       <Provider store={store}>
-        <Routes />
+        <PersistGate loading={null} persistor={persistor}>
+          <Routes />
+        </PersistGate>
       </Provider>
     )
   }
