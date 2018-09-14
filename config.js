@@ -1,3 +1,3 @@
 export default config = {
-  env: 'dev'
+  env: 'prod'
 }

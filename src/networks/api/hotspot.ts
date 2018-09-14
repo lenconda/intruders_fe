@@ -4,7 +4,7 @@ import config from '../../../config.js'
 class HotspotApi {
 
   private http = axios.create({
-    baseURL: config.env === 'dev' ? 'http://localhost:3000/hotspot' : 'http://api.lenconda.top/intruders/hotspot'
+    baseURL: config.env === 'dev' ? 'http://localhost:3000/hotspot' : 'http://intruders.applinzi.com/hotspot'
   })
 
   private urls = {

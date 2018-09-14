@@ -4,7 +4,7 @@ import config from '../../../config'
 class SearchApi {
 
   private http = axios.create({
-    baseURL: config.env === 'dev' ? 'http://localhost:3000' : 'http://api.lenconda.top/intruders'
+    baseURL: config.env === 'dev' ? 'http://localhost:3000' : 'http://intruders.applinzi.com'
   })
 
   private urls = {

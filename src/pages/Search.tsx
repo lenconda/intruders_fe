@@ -1,20 +1,29 @@
-import React, { Component } from 'react'
-import { View, Text, TouchableHighlight, Alert, FlatList } from 'react-native'
+import React, {Component, Touch} from 'react'
+import { View, Text, TouchableHighlight, TouchableOpacity, Alert, FlatList } from 'react-native'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Actions } from 'react-native-router-flux'
 import { InputItem, Toast, List } from 'antd-mobile-rn'
+import { connect } from 'react-redux'
+import _ from 'lodash'
 
 import { remUnit, isNetworkError, isAndroid } from '../utils'
 import searchApi from '../networks/api/search'
 import { SearchResponse } from '../networks/interfaces'
 import Badge from '../components/Badge'
+import { ReduxState } from '../redux/interface'
+
+import { add_history, del_history, clear_history } from '../redux/modules/search_history/actions'
 
 const ListView = FlatList as any
 
 interface Props {
   text?: string
   tab?: string
+  histories: Array<string>
+  addHistory(item: string): void
+  delHistory(item: string): void
+  clearHistory(): void
 }
 
 interface State {
@@ -24,6 +33,26 @@ interface State {
   page: number
   hasMore: boolean
   isLoading: boolean
+}
+
+const mapStateToPtops = (state: ReduxState): object => {
+  return {
+    histories: state.historyState.histories
+  }
+}
+
+const mapDispatchToProps = (dispatch: any): object => {
+  return {
+    addHistory: item => {
+      dispatch(add_history(item))
+    },
+    delHistory: item => {
+      dispatch(del_history(item))
+    },
+    clearHistory: () => {
+      dispatch(clear_history())
+    }
+  }
 }
 
 class Search extends Component<Props, State> {
@@ -73,6 +102,53 @@ class Search extends Component<Props, State> {
     )
   }
 
+  historiesItem = ({ item }): JSX.Element => {
+    return (
+      <TouchableHighlight
+        underlayColor={'#f4f5f9'}
+        style={styles.listItemWrapper}
+        onPress={async () => {
+          let searchResults
+          try {
+            searchResults = await searchApi.search(item, 1, this.props.tab)
+            Toast.hide()
+          } catch (e) {
+            if (!isNetworkError(e)) {
+              Toast.fail('获取数据失败', 1)
+            }
+          }
+          this.setState({
+            searchResultItems: searchResults.data.data,
+            hasMore: searchResults.data.hasmore,
+            page: 2,
+            searchText: item
+          })
+        }}
+      >
+        <View>
+          <Text style={styles.listItemText} numberOfLines={1}>
+            <Icon name={'magnify'} size={15 * remUnit} color={'#7b8189'} />
+            &nbsp;{item}
+          </Text>
+          <TouchableOpacity
+            style={styles.listChevronWrapper}
+            onPress={() => {
+              this.props.delHistory(item)
+            }}
+          >
+            <Icon name={'close'} size={15 * remUnit} color={'#7b8189'} />
+          </TouchableOpacity>
+        </View>
+      </TouchableHighlight>
+    )
+  }
+
+  private addHistoryByDispatch = (item) => {
+    if (!(_.find(this.props.histories, item))) {
+      this.props.addHistory(item)
+    }
+  }
+
   componentWillMount() {
     Actions.refresh({
       renderTitle: (): JSX.Element => {
@@ -111,8 +187,9 @@ class Search extends Component<Props, State> {
                   hasMore: searchResults.data.hasmore,
                   page: 2,
                 })
+                this.addHistoryByDispatch(this.state.searchText)
               }}
-              autoFocus={true}
+              autoFocus={this.props.text === '' ? true : false}
               autoCapitalize={'none'}
               spellCheck={false}
             ></InputItem>
@@ -124,6 +201,7 @@ class Search extends Component<Props, State> {
 
   async componentDidMount() {
     if (this.props.text !== '') {
+      this.addHistoryByDispatch(this.props.text)
       let searchResults
       try {
         searchResults = await searchApi.search(this.props.text, 1, this.props.tab)
@@ -151,32 +229,59 @@ class Search extends Component<Props, State> {
           renderItem={this.resultItem}
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={
-            ((this.state.searchText === '') || !this.state.hasMore) ? null :
-              <TouchableHighlight
-                style={styles.searchResult}
-                underlayColor={'#f4f5f9'}
-                onPress={async () => {
-                  let searchResults
-                  try {
-                    searchResults = await searchApi.search(this.state.searchText, this.state.page, this.props.tab)
-                  } catch (e) {
-                    if (!isNetworkError(e)) {
-                      Toast.fail('获取数据失败', 1)
-                      return
+            <View>
+              {((this.state.searchText === '') || !this.state.hasMore) ? null :
+                <TouchableHighlight
+                  style={styles.searchResult}
+                  underlayColor={'#f4f5f9'}
+                  onPress={async () => {
+                    let searchResults
+                    try {
+                      searchResults = await searchApi.search(this.state.searchText, this.state.page, this.props.tab)
+                    } catch (e) {
+                      if (!isNetworkError(e)) {
+                        Toast.fail('获取数据失败', 1)
+                        return
+                      }
                     }
-                  }
-                  this.setState({
-                    page: this.state.page + 1,
-                    searchResultItems: [...this.state.searchResultItems, ...searchResults.data.data],
-                    hasMore: searchResults.data.hasmore
-                  })
-                }}
-              >
-                <Text style={styles.loadMoreText}>{this.state.isLoading ? '加载中...' : '加载更多'}</Text>
-              </TouchableHighlight>
+                    this.setState({
+                      page: this.state.page + 1,
+                      searchResultItems: [...this.state.searchResultItems, ...searchResults.data.data],
+                      hasMore: searchResults.data.hasmore
+                    })
+                  }}
+                >
+                  <Text style={styles.loadMoreText}>{this.state.isLoading ? '加载中...' : '加载更多'}</Text>
+                </TouchableHighlight>
+              }
+              {
+                this.props.histories.length === 0 ? null :
+                  <ListView
+                    style={styles.historiesListWrapper}
+                    data={this.props.histories}
+                    renderItem={this.historiesItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    ListHeaderComponent={
+                      <View
+                        style={styles.listItemWrapper}
+                      >
+                        <View style={styles.clearHistoryWrapper}>
+                          <Text style={[styles.clearHistoryText, { color: '#333' }]}>搜索历史</Text>
+                          <TouchableOpacity
+                            onPress={() => {
+                              this.props.clearHistory()
+                            }}
+                          >
+                            <Text style={[styles.clearHistoryText, { color: '#1b88ee' }]}>清空</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    }
+                  />
+              }
+            </View>
           }
-        >
-        </ListView>
+        />
       </View>
     )
   }
@@ -237,6 +342,38 @@ const styles = EStyleSheet.create({
     marginLeft: '2rem',
   },
 
+  listItemWrapper: {
+    padding: '12rem',
+  },
+
+  listItemText: {
+    color: '$titleColor',
+    width: '100%',
+  },
+
+  listChevronWrapper: {
+    width: '20rem',
+    height: '20rem',
+    position: 'absolute',
+    right: 0,
+  },
+
+  historiesListWrapper: {
+    borderTopWidth: 1,
+    borderTopColor: '$searchFieldBackgroundColor',
+  },
+
+  clearHistoryWrapper: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  clearHistoryText: {
+    fontSize: '12rem',
+  },
+
 })
 
-export default Search
+export default connect(mapStateToPtops, mapDispatchToProps)(Search)
