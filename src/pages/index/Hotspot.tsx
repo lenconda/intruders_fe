@@ -21,7 +21,7 @@ class Hotspot extends Component<Props, State> {
     super(props)
     this.state = {
       categories: [{
-        id: 'home',
+        id: 'loading',
         name: '加载中...'
       }]
     }

@@ -51,6 +51,7 @@ class HotspotList extends Component<Props, State> {
   }
 
   async componentWillMount() {
+    if (this.props.id === 'loading') return
     let items = await this.fetchLists(this.props.id)
     this.setState({
       items,
