@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Dimensions } from 'react-native'
+import { Dimensions, StatusBar } from 'react-native'
 import { Provider } from 'react-redux'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import RNSplashScreen from 'react-native-splash-screen'
@@ -40,6 +40,10 @@ export default class App extends Component<Props, State> {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
+          <StatusBar
+            backgroundColor={'#fff'}
+            barStyle={'dark-content'}
+          />
           <Routes />
         </PersistGate>
       </Provider>
