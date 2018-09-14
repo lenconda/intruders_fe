@@ -13,7 +13,7 @@ const historyReducer = (state: State = initialState, action: any) => {
     case 'ADD_HISTORY':
       state = {
         ...state,
-        histories: [...state.histories, action.payload]
+        histories: [action.payload, ...state.histories]
       }
       break
     case 'DEL_HISTORY':
