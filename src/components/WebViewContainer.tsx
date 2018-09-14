@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {View, WebView } from 'react-native'
+import { View, WebView, Platform, BackHandler } from 'react-native'
 import { connect } from 'react-redux';
 import { Toast } from 'antd-mobile-rn'
 import { Actions } from 'react-native-router-flux'
@@ -33,20 +33,28 @@ interface Props {
   url: string
   detail?: any
   ActionSheet?: JSX.Element
+  WebView?: JSX.Element
   favorites?: Array<any>
   addFavorite(detail: any): void
   delFavorite(detail: any): void
 }
 
-interface State { }
+interface State {
+  canGoBack?: any
+}
 
 class WebContainer extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props)
+    this.state = {
+      canGoBack: false
+    }
   }
 
   private ActionSheet?: any
+
+  private WebView?: any
 
   showActionSheet = () => {
     this.ActionSheet.show()
@@ -57,13 +65,26 @@ class WebContainer extends Component<Props, State> {
       rightTitle: this.props.detail.url ? <Icon name={'dots-vertical'} size={16 * remUnit} color={'#333'} /> : null,
       onRight: this.showActionSheet
     })
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid)
+    }
   }
 
-  render() {
+  private onBackAndroid = (): boolean => {
+    if (this.state.canGoBack) {
+      this.WebView.goBack();
+      return true
+    } else {
+      return false
+    }
+  }
+
+  render(): JSX.Element {
 
     return (
       <View style={{ flex: 1 }}>
         <WebView
+          ref={webview => this.WebView = webview}
           source={{ uri: this.props.url }}
           onError={() => {Toast.offline('网页加载失败', 1)}}
           onLoadStart={() => {Toast.loading('加载中...')}}
@@ -71,6 +92,9 @@ class WebContainer extends Component<Props, State> {
           javaScriptEnabled={true}
           onNavigationStateChange={(navState) => {
             Actions.refresh({ title: navState.title })
+            this.setState({
+              canGoBack: navState.canGoBack
+            })
           }}
         />
         <ActionSheet
