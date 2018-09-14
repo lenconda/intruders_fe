@@ -305,6 +305,8 @@ const styles = EStyleSheet.create({
     paddingRight: '16rem',
     flexDirection: 'row',
     alignItems: 'center',
+    borderBottomWidth: isAndroid ? 1 : 0,
+    borderBottomColor: '$searchFieldBackgroundColor',
   },
 
   searchField: {
