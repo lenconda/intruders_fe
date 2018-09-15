@@ -12,6 +12,13 @@ export function del_history(item: string): object {
   }
 }
 
+export function resort_history(item: string): object {
+  return {
+    type: 'RESORT_HISTORY',
+    payload: item
+  }
+}
+
 export function clear_history(): object {
   return {
     type: 'CLEAR_HISTORY',

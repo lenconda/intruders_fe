@@ -22,6 +22,12 @@ const historyReducer = (state: State = initialState, action: any) => {
         histories: _.remove(state.histories, item => item !== action.payload)
       }
       break
+    case 'RESORT_HISTORY':
+      state = {
+        ...state,
+        histories: [action.payload, ..._.remove(state.histories, item => item !== action.payload)]
+      }
+      break
     case 'CLEAR_HISTORY':
       state = {
         ...state,

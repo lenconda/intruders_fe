@@ -76,7 +76,7 @@ class WebContainer extends Component<Props, State> {
             onPress={() => {Actions.pop()}}
             style={styles.closeIcon}
           >
-            <Icon name={'close'} size={16 * remUnit} />
+            <Icon name={'close'} size={16 * remUnit} color={'#333'} />
           </TouchableOpacity>
         }
         <Text style={styles.titleText} numberOfLines={1}>{title}</Text>
@@ -171,6 +171,7 @@ const styles = EStyleSheet.create({
 
   closeIcon: {
     marginRight: '10rem',
+    marginLeft: '10rem',
   },
 
   return: {

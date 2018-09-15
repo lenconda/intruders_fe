@@ -13,7 +13,7 @@ import { SearchResponse } from '../networks/interfaces'
 import Badge from '../components/Badge'
 import { ReduxState } from '../redux/interface'
 
-import { add_history, del_history, clear_history } from '../redux/modules/search_history/actions'
+import { add_history, del_history, resort_history, clear_history } from '../redux/modules/search_history/actions'
 
 const ListView = FlatList as any
 
@@ -23,6 +23,7 @@ interface Props {
   histories: Array<string>
   addHistory(item: string): void
   delHistory(item: string): void
+  resortHistory(item: string): void
   clearHistory(): void
 }
 
@@ -48,6 +49,9 @@ const mapDispatchToProps = (dispatch: any): object => {
     },
     delHistory: item => {
       dispatch(del_history(item))
+    },
+    resortHistory: item => {
+      dispatch(resort_history(item))
     },
     clearHistory: () => {
       dispatch(clear_history())
@@ -108,6 +112,7 @@ class Search extends Component<Props, State> {
         underlayColor={'#f4f5f9'}
         style={styles.listItemWrapper}
         onPress={async () => {
+          this.addHistoryByDispatch(item)
           Toast.loading('搜索中...')
           let searchResults
           try {
@@ -147,6 +152,8 @@ class Search extends Component<Props, State> {
   private addHistoryByDispatch = (item) => {
     if (!(_.find(this.props.histories, history => history === item ))) {
       this.props.addHistory(item)
+    } else {
+      this.props.resortHistory(item)
     }
   }
 
@@ -173,6 +180,7 @@ class Search extends Component<Props, State> {
                 })
               }}
               onSubmitEditing={async () => {
+                this.addHistoryByDispatch(this.state.searchText)
                 let searchResults
                 Toast.loading('搜索中...')
                 try {
@@ -188,7 +196,6 @@ class Search extends Component<Props, State> {
                   hasMore: searchResults.data.hasmore,
                   page: 2,
                 })
-                this.addHistoryByDispatch(this.state.searchText)
               }}
               autoFocus={this.props.text === '' ? true : false}
               autoCapitalize={'none'}
