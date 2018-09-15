@@ -108,6 +108,7 @@ class Search extends Component<Props, State> {
         underlayColor={'#f4f5f9'}
         style={styles.listItemWrapper}
         onPress={async () => {
+          Toast.loading('搜索中...')
           let searchResults
           try {
             searchResults = await searchApi.search(item, 1, this.props.tab)

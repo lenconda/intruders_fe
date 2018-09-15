@@ -59,13 +59,6 @@ class Explore extends Component<Props, State> {
             <Text style={styles.searchFieldRightText}>热门</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            Actions.push('webview', {url: 'https://blog.lenconda.top', detail: {url: 'https://blog.lenconda.top'}})
-          }}
-        >
-          <Text>Fuck rn</Text>
-        </TouchableOpacity>
       </View>
     )
   }
