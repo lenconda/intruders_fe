@@ -144,7 +144,7 @@ class Search extends Component<Props, State> {
   }
 
   private addHistoryByDispatch = (item) => {
-    if (!(_.find(this.props.histories, item))) {
+    if (!(_.find(this.props.histories, history => history === item ))) {
       this.props.addHistory(item)
     }
   }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Text, View, TouchableOpacity } from 'react-native'
+import {Text, View, TouchableOpacity, Button } from 'react-native'
 import { connect } from 'react-redux'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import { Actions } from 'react-native-router-flux'
@@ -59,6 +59,13 @@ class Explore extends Component<Props, State> {
             <Text style={styles.searchFieldRightText}>热门</Text>
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            Actions.push('webview', {url: 'https://blog.lenconda.top', detail: {url: 'https://blog.lenconda.top'}})
+          }}
+        >
+          <Text>Fuck rn</Text>
+        </TouchableOpacity>
       </View>
     )
   }

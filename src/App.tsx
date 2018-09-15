@@ -51,14 +51,3 @@ export default class App extends Component<Props, State> {
   }
 
 }
-
-const styles = EStyleSheet.create({
-
-  container: {
-    flex: 1,
-    backgroundColor: '$backgroundColor',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-})

@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import { View, WebView, Platform, BackHandler } from 'react-native'
+import { View, WebView, Platform, Image, BackHandler, TouchableOpacity, Text } from 'react-native'
 import { connect } from 'react-redux';
 import { Toast } from 'antd-mobile-rn'
 import { Actions } from 'react-native-router-flux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import {remUnit} from '../utils'
+import { isAndroid, remUnit } from '../utils'
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import _ from 'lodash'
+import EStyleSheet from 'react-native-extended-stylesheet'
 
 import { ReduxState } from '../redux/interface'
 import ActionWrapper from '../components/ActionWrapper'
@@ -41,7 +42,12 @@ interface Props {
 
 interface State {
   canGoBack?: any
+  title?: string
 }
+
+let instance = {
+  onBack: () => {}
+} as WebContainer
 
 class WebContainer extends Component<Props, State> {
 
@@ -50,6 +56,7 @@ class WebContainer extends Component<Props, State> {
     this.state = {
       canGoBack: false
     }
+    BackHandler.addEventListener('hardwareBackPress', this.onBack)
   }
 
   private ActionSheet?: any
@@ -60,23 +67,43 @@ class WebContainer extends Component<Props, State> {
     this.ActionSheet.show()
   }
 
+  private renderTitle = (title: any, shouldClose: boolean) => {
+    return (
+      <View style={styles.navigationTitle}>
+        {
+          shouldClose &&
+          <TouchableOpacity
+            onPress={() => {Actions.pop()}}
+            style={styles.closeIcon}
+          >
+            <Icon name={'close'} size={16 * remUnit} />
+          </TouchableOpacity>
+        }
+        <Text style={styles.titleText} numberOfLines={1}>{title}</Text>
+      </View>
+    )
+  }
+
   componentWillMount() {
     Actions.refresh({
       rightTitle: this.props.detail.url ? <Icon name={'dots-vertical'} size={16 * remUnit} color={'#333'} /> : null,
-      onRight: this.showActionSheet
+      onRight: this.showActionSheet,
+      onBack: () => this.onBack(),
     })
-    if (Platform.OS === 'android') {
-      BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid)
-    }
   }
 
-  private onBackAndroid = (): boolean => {
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.onBack)
+  }
+
+  onBack = (): boolean => {
     if (this.state.canGoBack) {
-      this.WebView.goBack();
+      this.WebView.goBack()
       return true
     } else {
-      return false
+      Actions.pop()
     }
+    return true
   }
 
   render(): JSX.Element {
@@ -91,9 +118,12 @@ class WebContainer extends Component<Props, State> {
           onLoad={() => {Toast.hide()}}
           javaScriptEnabled={true}
           onNavigationStateChange={(navState) => {
-            Actions.refresh({ title: navState.title })
+            Actions.refresh({
+              title: navState.title,
+              renderTitle: this.renderTitle(navState.title, navState.canGoBack)
+            })
             this.setState({
-              canGoBack: navState.canGoBack
+              canGoBack: navState.canGoBack,
             })
           }}
         />
@@ -122,5 +152,34 @@ class WebContainer extends Component<Props, State> {
   }
 
 }
+
+const styles = EStyleSheet.create({
+
+  navigationTitle: {
+    flex: 1,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+
+  titleText: {
+    width: '100%',
+    color: '#333',
+    fontSize: '15rem',
+  },
+
+  closeIcon: {
+    marginRight: '10rem',
+  },
+
+  return: {
+    width: '13rem',
+    height: '13rem',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(WebContainer)
